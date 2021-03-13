@@ -3,12 +3,11 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from tuner.songs.similarities import cosine_similarity, jaccards_coefficient
 
-songs_df = pd.read_csv("./data/songs.csv", index_col="spotify_id")
-song_top_20_sims = pd.read_csv("./data/top-20-sims.csv", index_col="spotify_id")
-song_sims_df = pd.read_csv("./data/song-similarities.csv", index_col="spotify_id")
+songs_df = pd.read_csv("https://media.githubusercontent.com/media/diego-codes/tuner/master/data/songs.csv", index_col="spotify_id")
+song_top_20_sims = pd.read_csv("https://media.githubusercontent.com/media/diego-codes/tuner/master/data/top-20-sims.csv", index_col="spotify_id")
 
-features = pd.read_csv("./data/features.csv")["0"]
-genres = pd.read_csv("./data/genres.csv")["0"]
+features = pd.read_csv("https://media.githubusercontent.com/media/diego-codes/tuner/master/data/features.csv")["0"]
+genres = pd.read_csv("https://media.githubusercontent.com/media/diego-codes/tuner/master/data/genres.csv")["0"]
 songs = [{
   "id": id, 
   "title": s.title, 
