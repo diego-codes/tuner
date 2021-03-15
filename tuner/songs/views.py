@@ -34,12 +34,17 @@ def get_recommendations(request):
   weighted_song_ratings[weighted_song_ratings == -1] *= rocchios_neg_weight
   weighted_song_ratings
 
-  user_profile = songs_df.loc[ratings.index][[*features, *genres]].multiply(weighted_song_ratings, axis=0).sum()
+  user_profile = songs_df.loc[ratings.index][[*features, *genres]].multiply(weighted_song_ratings, axis=0).mean()
 
   feature_sims = cosine_similarity(user_profile[features], songs_df.drop(ratings.index)[features])
   genres_sims = jaccards_coefficient(user_profile[genres], songs_df.drop(ratings.index)[genres])
 
   # Weight the genre scores against the features score.
   weight = 0.01
-  sims = (feature_sims * (1 - weight) + genres_sims * weight)
-  return Response([{ "id": id, "score": score } for id, score in sims.sort_values().tail(10).iteritems()])
+  sims = (feature_sims * (1 - weight) + genres_sims * weight).sort_values()
+  percentiles = [int(sims.size * i/100) for i in range(95, 60, -4)]
+
+  return Response({
+    "similar": [{ "id": id, "score": score } for id, score in sims.tail(10).iteritems()],
+    "percentile": [{ "id": id, "score": score } for id, score in sims.iloc[percentiles].iteritems()]
+    })
